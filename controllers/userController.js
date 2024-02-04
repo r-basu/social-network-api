@@ -80,6 +80,43 @@ module.exports = {
 
       res.json(user);
     } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  },
+  // Add Friend
+  async addFriend(req, res) {
+    try {
+      const user = User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $addToSet: { friends: req.params.friendId } }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: "No user with that ID" });
+      }
+
+      res.json(user);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  },
+  // Delete Friend
+  async deleteFriend(req, res) {
+    try {
+      const user = User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $pull: { friends: req.params.friendId } }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: "No user with that ID" });
+      }
+
+      res.json(user);
+    } catch (err) {
+      console.log(err);
       return res.status(500).json(err);
     }
   },
