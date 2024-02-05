@@ -98,7 +98,7 @@ module.exports = {
   },
   async deleteReaction(req, res) {
     try {
-      const reactionId = await new mongoose.Types.ObjectId(req.body.reactionId);
+      const reactionId = new mongoose.Types.ObjectId(req.body.reactionId);
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
         { $pull: { reactions: { reactionId: reactionId } } }
