@@ -87,9 +87,10 @@ module.exports = {
   // Add Friend
   async addFriend(req, res) {
     try {
-      const user = User.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $addToSet: { friends: req.params.friendId } }
+        { $addToSet: { friends: req.params.friendId } },
+        { new: true}
       );
 
       if (!user) {
@@ -105,9 +106,10 @@ module.exports = {
   // Delete Friend
   async deleteFriend(req, res) {
     try {
-      const user = User.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $pull: { friends: req.params.friendId } }
+        { $pull: { friends: req.params.friendId } },
+        { new: true}
       );
 
       if (!user) {

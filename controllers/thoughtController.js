@@ -1,5 +1,5 @@
-const { ObjectID } = require("mongoose").Types;
 const { User, Thought } = require("../models");
+const mongoose = require("mongoose");
 
 module.exports = {
   async getThoughts(req, res) {
@@ -68,6 +68,47 @@ module.exports = {
       } else {
         res.status(404).json({ message: "User not found" });
       }
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  },
+  async addReaction(req, res) {
+    try {
+      const newReaction = {
+        reactionBody: req.body.reactionBody,
+        username: req.body.username,
+      };
+
+      const thought = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $addToSet: { reactions: newReaction } },
+        { new: true }
+      );
+
+      if (!thought) {
+        res.status(404).json({ message: "No thought with that ID" });
+      }
+
+      res.json(thought);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  },
+  async deleteReaction(req, res) {
+    try {
+      const reactionId = await new mongoose.Types.ObjectId(req.body.reactionId);
+      const thought = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $pull: { reactions: { reactionId: reactionId } } }
+      );
+
+      if (!thought) {
+        res.status(404).json({ message: "No thought with that ID" });
+      }
+
+      res.json(thought);
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
